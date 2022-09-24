@@ -8,9 +8,9 @@ import dev.lambdaurora.spruceui.screen.SpruceScreen;
 import dev.lambdaurora.spruceui.widget.SpruceButtonWidget;
 import dev.lambdaurora.spruceui.widget.container.SpruceOptionListWidget;
 import io.ix0rai.rainglow.Rainglow;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -25,29 +25,29 @@ public class RainglowConfigScreen extends SpruceScreen {
     public RainglowConfigScreen(@Nullable Screen parent) {
         super(Rainglow.translatableText("config.title"));
         this.parent = parent;
-        this.mode = Rainglow.CONFIG.getMode();
+        this.mode = RainglowConfig.getMode();
 
         this.modeOption = new SpruceCyclingOption(Rainglow.translatableTextKey("config.mode"),
                 amount -> mode = mode.next(),
                 option -> option.getDisplayText(mode.getTranslatedText()),
-                Text.translatable(Rainglow.MOD_ID + ".tooltip.mode",
+                Component.translatable(Rainglow.MOD_ID + ".tooltip.mode",
                         List.of(RainglowMode.values())
                 )
         );
 
         this.resetOption = SpruceSimpleActionOption.reset(btn -> {
             this.mode = RainglowMode.RAINBOW;
-            MinecraftClient client = MinecraftClient.getInstance();
-            this.init(client, client.getWindow().getScaledWidth(), client.getWindow().getScaledHeight());
+            Minecraft client = Minecraft.getInstance();
+            this.init(client, client.getWindow().getGuiScaledWidth(), client.getWindow().getGuiScaledHeight());
         });
     }
 
     @Override
-    public void closeScreen() {
-        if (this.client != null) {
-            this.client.setScreen(this.parent);
+    public void onClose() {
+        if (this.minecraft != null) {
+            this.minecraft.setScreen(this.parent);
         } else {
-            super.closeScreen();
+            super.onClose();
         }
     }
 
@@ -59,14 +59,14 @@ public class RainglowConfigScreen extends SpruceScreen {
 
         SpruceOptionListWidget options = new SpruceOptionListWidget(Position.of(0, 22), this.width, this.height - (35 + 22));
         options.addOptionEntry(this.modeOption, null);
-        this.addDrawableChild(options);
+        this.addRenderableWidget(options);
 
-        this.addDrawableChild(this.resetOption.createWidget(Position.of(this, this.width / 2 - 155, this.height - 29), 150));
-        this.addDrawableChild(new SpruceButtonWidget(Position.of(this, this.width / 2 - 155 + 160, this.height - 29), 150,
+        this.addRenderableWidget(this.resetOption.createWidget(Position.of(this, this.width / 2 - 155, this.height - 29), 150));
+        this.addRenderableWidget(new SpruceButtonWidget(Position.of(this, this.width / 2 - 155 + 160, this.height - 29), 150,
                 buttonHeight, Rainglow.translatableText("config.save"),
                 buttonWidget -> {
-                    this.closeScreen();
-                    Rainglow.CONFIG.setMode(this.mode);
+                    this.onClose();
+                    RainglowConfig.setMode(this.mode);
                 }
         ));
     }

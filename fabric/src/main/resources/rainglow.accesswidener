@@ -1,0 +1,12 @@
+accessWidener	v1	named
+
+accessible   class   net/minecraft/client/particle/GlowParticle$GlowSquidProvider
+
+accessible  method   net/minecraft/client/particle/GlowParticle <init>  (Lnet/minecraft/client/multiplayer/ClientLevel;DDDDDDLnet/minecraft/client/particle/SpriteSet;)V
+accessible field net/minecraft/client/particle/GlowParticle RANDOM Lnet/minecraft/util/RandomSource;
+
+accessible  method   net/minecraft/client/particle/SquidInkParticle <init>  (Lnet/minecraft/client/multiplayer/ClientLevel;DDDDDDILnet/minecraft/client/particle/SpriteSet;)V
+
+accessible field net/minecraft/client/particle/Particle xd D
+accessible field net/minecraft/client/particle/Particle yd D
+accessible field net/minecraft/client/particle/Particle zd D

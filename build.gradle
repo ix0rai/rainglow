@@ -1,66 +1,63 @@
-plugins {
-    id "io.github.p03w.machete" version "1.2.0"
-    id "fabric-loom" version "1.0-SNAPSHOT"
-    id "com.github.johnrengelman.shadow" version "7.1.2"
-    id "org.quiltmc.quilt-mappings-on-loom" version "4.2.0"
-}
+subprojects {
 
-version = project.mod_version
-group = project.maven_group
+    apply plugin: 'java'
 
-repositories {
-    mavenCentral()
-    maven { url = "https://maven.gegy.dev/" }
-    maven { url = "https://maven.terraformersmc.com/releases/" }
-}
+    java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+    java.withSourcesJar()
+    java.withJavadocJar()
 
-configurations {
-    shadow
-    api.extendsFrom shadow
-}
-
-dependencies {
-    // versions defined in gradle.properties
-    minecraft("com.mojang:minecraft:${project.minecraft_version}")
-    mappings(loom.layered {
-        addLayer(quiltMappings.mappings("org.quiltmc:quilt-mappings:${project.minecraft_version}+build.${project.quilt_mappings}:v2"))
-    })
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-
-    include(modImplementation("dev.lambdaurora:spruceui:${project.spruceui_version}"))
-    modImplementation("com.terraformersmc:modmenu:${project.mod_menu_version}")
-}
-
-processResources {
-    inputs.property "version", project.version
-    filteringCharset "UTF-8"
-
-    filesMatching("fabric.mod.json") {
-        expand "version": project.version
+    jar {
+        from(rootProject.file("LICENSE")) {
+            rename { "${it}_${mod_id}" }
+        }
+        manifest {
+            attributes([
+                    'Specification-Title'     : mod_id,
+                    'Specification-Vendor'    : mod_author,
+                    'Specification-Version'   : project.jar.archiveVersion,
+                    'Implementation-Title'    : project.name,
+                    'Implementation-Version'  : project.jar.archiveVersion,
+                    'Implementation-Vendor'   : mod_author,
+                    'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                    'Timestamp'              : System.currentTimeMillis(),
+                    'Built-On-Java'           : "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})",
+                    'Built-On-Minecraft'      : minecraft_version
+            ])
+        }
     }
-}
 
-loom {
-    accessWidenerPath = file("src/main/resources/rainglow.accesswidener")
-}
-
-def targetJavaVersion = Integer.parseInt(project.java_version)
-tasks.withType(JavaCompile).configureEach {
-    it.options.encoding = "UTF-8"
-    it.options.release = targetJavaVersion
-}
-
-java {
-    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
-    if (JavaVersion.current() < javaVersion) {
-        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    sourcesJar {
+        from(rootProject.file("LICENSE")) {
+            rename { "${it}_${mod_id}" }
+        }
     }
-    archivesBaseName = project.archives_base_name
-    withSourcesJar()
-}
 
-jar {
-    from("LICENSE") {
-        rename { "${it}_${project.archivesBaseName}" }
+    repositories {
+
+        mavenCentral()
+
+        maven {
+            name = 'Sponge / Mixin'
+            url = 'https://repo.spongepowered.org/repository/maven-public/'
+        }
+
+        maven {
+            name = 'BlameJared Maven (CrT / Bookshelf)'
+            url = 'https://maven.blamejared.com'
+        }
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+
+        it.options.encoding = 'UTF-8'
+        it.options.release = 17
+    }
+
+    // Disables Gradle's custom module metadata from being published to maven. The
+    // metadata includes mapped dependencies which are not reasonably consumable by
+    // other mod developers.
+    tasks.withType(GenerateModuleMetadata) {
+
+        enabled = false
     }
 }

@@ -13,18 +13,21 @@
   },
   "license": "MIT",
   "icon": "assets/rainglow/icon.png",
+  "accessWidener": "rainglow.accesswidener",
   "environment": "*",
-  "accessWidener" : "rainglow.accesswidener",
   "mixins": [
     "rainglow.mixins.json"
   ],
   "entrypoints": {
+    "main": [
+      "io.ix0rai.rainglow.config.Initializer"
+    ],
     "modmenu": [
       "io.ix0rai.rainglow.config.RainglowModMenu"
     ]
   },
   "depends": {
-    "fabricloader": ">=0.14.9",
+    "fabricloader": ">=0.14.8",
     "minecraft": "1.19.2"
   }
 }

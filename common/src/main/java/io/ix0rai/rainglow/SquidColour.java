@@ -1,11 +1,11 @@
 package io.ix0rai.rainglow;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public enum SquidColour {
     BLUE(
             "blue",
-            new Identifier("textures/entity/squid/glow_squid.png"),
+            new ResourceLocation("textures/entity/squid/glow_squid.png"),
             new RGB(0.6F, 1.0F, 0.8F),
             new RGB(0.08F, 0.4F, 0.4F),
             new RGB(204, 31, 102)
@@ -72,16 +72,16 @@ public enum SquidColour {
     );
 
     private final String id;
-    private final Identifier texture;
+    private final ResourceLocation texture;
     private final RGB passiveParticleRgb;
     private final RGB altPassiveParticleRgb;
     private final RGB inkRgb;
 
     SquidColour(String id, RGB passiveParticleRgb, RGB altPassiveParticleRgb, RGB inkRgb) {
-        this(id, new Identifier("textures/entity/squid/" + id + ".png"), passiveParticleRgb, altPassiveParticleRgb, inkRgb);
+        this(id, new ResourceLocation("textures/entity/squid/" + id + ".png"), passiveParticleRgb, altPassiveParticleRgb, inkRgb);
     }
 
-    SquidColour(String id, Identifier texture, RGB passiveParticleRgb, RGB altPassiveParticleRgb, RGB inkRgb) {
+    SquidColour(String id, ResourceLocation texture, RGB passiveParticleRgb, RGB altPassiveParticleRgb, RGB inkRgb) {
         this.id = id;
         this.texture = texture;
         this.passiveParticleRgb = passiveParticleRgb;
@@ -93,7 +93,7 @@ public enum SquidColour {
         return this.id;
     }
 
-    public Identifier getTexture() {
+    public ResourceLocation getTexture() {
         return this.texture;
     }
 

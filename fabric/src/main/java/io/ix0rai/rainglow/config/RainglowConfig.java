@@ -11,13 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RainglowConfig {
-    private String mode;
+    private static String mode;
     private static final String CONFIG_FILE_NAME = "rainglow.toml";
     private static final Path CONFIG_FILE_PATH = Paths.get(FabricLoader.getInstance().getConfigDir().resolve(CONFIG_FILE_NAME).toUri());
 
     private static final String MODE_KEY = "mode";
 
-    public RainglowConfig() {
+    static {
         // default mode: rainbow
         String modeToSet = RainglowMode.RAINBOW.getName();
 
@@ -44,12 +44,12 @@ public class RainglowConfig {
             Rainglow.LOGGER.warn("failed to read config file, using default mode (rainbow) and creating new config file");
         } finally {
             // set mode and write to config file
-            this.mode = modeToSet;
+            mode = modeToSet;
             writeMode(modeToSet);
         }
     }
 
-    private void writeMode(String mode) {
+    private static void writeMode(String mode) {
         try {
             Files.writeString(CONFIG_FILE_PATH, MODE_KEY + " = \"" + mode + "\"");
         } catch (IOException e) {
@@ -57,13 +57,13 @@ public class RainglowConfig {
         }
     }
 
-    public RainglowMode getMode() {
-        return RainglowMode.byId(this.mode).orElse(RainglowMode.RAINBOW);
+    public static RainglowMode getMode() {
+        return RainglowMode.byId(mode).orElse(RainglowMode.RAINBOW);
     }
 
-    public void setMode(RainglowMode mode) {
-        this.mode = mode.getName();
-        Rainglow.setMode(mode);
-        this.writeMode(mode.getName());
+    public static void setMode(RainglowMode newMode) {
+        mode = newMode.getName();
+        Rainglow.setMode(newMode);
+        writeMode(newMode.getName());
     }
 }

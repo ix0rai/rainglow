@@ -1,8 +1,16 @@
 pluginManagement {
     repositories {
-        maven { url = "https://maven.fabricmc.net/" }
-        maven { url = "https://maven.quiltmc.org/repository/release" }
-
         gradlePluginPortal()
+        maven {
+            name = 'Fabric'
+            url = 'https://maven.fabricmc.net/'
+        }
+        maven {
+            name = 'Sponge Snapshots'
+            url = 'https://repo.spongepowered.org/repository/maven-public/'
+        }
     }
 }
+
+rootProject.name = 'rainglow'
+include("common", "fabric", "forge")

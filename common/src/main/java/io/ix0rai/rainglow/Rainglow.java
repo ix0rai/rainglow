@@ -1,14 +1,13 @@
 package io.ix0rai.rainglow;
 
-import io.ix0rai.rainglow.config.RainglowConfig;
 import io.ix0rai.rainglow.config.RainglowMode;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.passive.GlowSquidEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.random.RandomGenerator;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.GlowSquid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,17 +19,16 @@ import java.util.Map;
 public class Rainglow {
     public static final String MOD_ID = "rainglow";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-    public static final RainglowConfig CONFIG = new RainglowConfig();
 
-    public static final TrackedData<String> COLOUR;
+    public static final EntityDataAccessor<String> COLOUR;
 
     private static final List<SquidColour> COLOURS = new ArrayList<>();
     // we maintain a hash map of textures as well to speed up lookup as much as possible
-    private static final Map<String, Identifier> TEXTURES = new HashMap<>();
+    private static final Map<String, ResourceLocation> TEXTURES = new HashMap<>();
 
     static {
-        COLOUR = DataTracker.registerData(GlowSquidEntity.class, TrackedDataHandlerRegistry.STRING);
-        setMode(CONFIG.getMode());
+        COLOUR = SynchedEntityData.defineId(GlowSquid.class, EntityDataSerializers.STRING);
+        setMode(RainglowMode.RAINBOW);
     }
 
     public static void setMode(RainglowMode mode) {
@@ -48,7 +46,7 @@ public class Rainglow {
         }
     }
 
-    public static Identifier getTexture(String colour) {
+    public static ResourceLocation getTexture(String colour) {
         return TEXTURES.get(colour);
     }
 
@@ -60,20 +58,20 @@ public class Rainglow {
         return COLOURS.get(index).getInkRgb();
     }
 
-    public static SquidColour.RGB getPassiveParticleRGB(int index, RandomGenerator random) {
+    public static SquidColour.RGB getPassiveParticleRGB(int index, RandomSource random) {
         SquidColour colour = COLOURS.get(index);
         return random.nextBoolean() ? colour.getPassiveParticleRgb() : colour.getAltPassiveParticleRgb();
     }
 
-    public static SquidColour generateRandomColour(RandomGenerator random) {
+    public static SquidColour generateRandomColour(RandomSource random) {
         return COLOURS.get(random.nextInt(COLOURS.size()));
     }
 
-    public static Identifier getDefaultTexture() {
+    public static ResourceLocation getDefaultTexture() {
         return TEXTURES.get(COLOURS.get(0).getId());
     }
 
-    public static String getColour(DataTracker tracker, RandomGenerator random) {
+    public static String getColour(SynchedEntityData tracker, RandomSource random) {
         String colour = tracker.get(COLOUR);
         if (!isColourLoaded(colour)) {
             tracker.set(COLOUR, generateRandomColour(random).getId());
@@ -91,7 +89,7 @@ public class Rainglow {
         return MOD_ID + "." + key;
     }
 
-    public static Text translatableText(String key) {
-        return Text.translatable(translatableTextKey(key));
+    public static Component translatableText(String key) {
+        return Component.translatable(translatableTextKey(key));
     }
 }

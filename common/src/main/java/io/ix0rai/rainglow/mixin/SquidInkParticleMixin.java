@@ -2,29 +2,29 @@ package io.ix0rai.rainglow.mixin;
 
 import io.ix0rai.rainglow.Rainglow;
 import io.ix0rai.rainglow.SquidColour;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.client.particle.SpriteProvider;
+import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.client.particle.SquidInkParticle;
-import net.minecraft.client.util.ColorUtil;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.particle.DefaultParticleType;
+import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.util.FastColor;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(SquidInkParticle.GlowSquidInkFactory.class)
+@Mixin(SquidInkParticle.GlowInkProvider.class)
 public class SquidInkParticleMixin {
     @Final
     @Shadow
-    private SpriteProvider spriteProvider;
+    private SpriteSet sprites;
 
     /**
      * @author ix0rai
      * @reason custom colours for ink particles
      */
     @Overwrite
-    public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
+    public Particle createParticle(SimpleParticleType defaultParticleType, ClientLevel clientWorld, double d, double e, double f, double g, double h, double i) {
         // protect from things from like .05 turning into .04999999999999999
         d = Math.round(d * 1000.0) / 1000.0;
 
@@ -37,6 +37,6 @@ public class SquidInkParticleMixin {
         int colourIndex = (int) ((secondDecimalPoint + (thirdDecimalPoint / 10.0)) * 10);
 
         SquidColour.RGB rgb = Rainglow.getInkRgb(colourIndex);
-        return new SquidInkParticle(clientWorld, d, e, f, g, h, i, ColorUtil.ARGB32.getArgb(255, (int) rgb.r(), (int) rgb.g(), (int) rgb.b()), this.spriteProvider);
+        return new SquidInkParticle(clientWorld, d, e, f, g, h, i, FastColor.ARGB32.color(255, (int) rgb.r(), (int) rgb.g(), (int) rgb.b()), this.sprites);
     }
 }
