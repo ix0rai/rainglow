@@ -1,0 +1,21 @@
+modLoader="javafml"
+loaderVersion="[43,)"
+license="MIT"
+
+[[mods]]
+modId="rainglow"
+version="${file.jarVersion}"
+displayName="Example Mod"
+displayURL="https://github.com/ix0rai/rainglow"
+logoFile="assets/rainglow/icon.png"
+authors="ix0rai"
+description='''
+rainbow glow squids!
+'''
+
+[[dependencies.rainglow]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.19.2,1.20)"
+    ordering="NONE"
+    side="BOTH"
